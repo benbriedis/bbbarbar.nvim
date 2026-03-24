@@ -1,3 +1,4 @@
+local floor = math.floor
 local max = math.max
 local rshift = bit.rshift
 
@@ -142,6 +143,23 @@ function events.close_click_handler(buffer)
     exec_autocmds('BufModifiedSet', {buffer = buffer})
   else
     bdelete(false, buffer, CLOSE_CLICK_MODS)
+  end
+end
+
+--- What to do when clicking a scroll arrow
+--- NOTE: must be global -_-
+--- @param direction integer 1 = scroll left, 2 = scroll right
+--- @return nil
+function events.scroll_click_handler(direction, _, btn, _)
+  if btn ~= 'l' then
+    return
+  end
+  local data = layout.calculate(state)
+  local step = max(1, floor(data.buffers.unpinned_allocated_width * 2 / 3))
+  if direction == 1 then
+    render.scroll(-step)
+  else
+    render.scroll(step)
   end
 end
 

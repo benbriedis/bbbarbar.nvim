@@ -4,6 +4,7 @@
 
 local ceil = math.ceil
 local max = math.max
+local min = math.min
 local table_insert = table.insert
 
 local buf_get_option = vim.api.nvim_buf_get_option --- @type function
@@ -107,7 +108,8 @@ end
 --- @param n integer the amount to scroll by. Use negative numbers to scroll left, and positive to scroll right.
 --- @return nil
 function render.scroll(n)
-  render.set_scroll(max(0, scroll.target + n))
+  local scroll_max = layout.calculate(state).buffers.scroll_max
+  render.set_scroll(max(0, min(scroll.target + n, scroll_max)))
 end
 
 local scroll_animation = nil
@@ -471,18 +473,22 @@ local function generate_tabline(bufnrs, refocus)
     content = nodes.insert_many(filler, 0, content)
     content = nodes.slice_right(content, data.buffers.width)
 
+    local click_enabled = has('tablineat') and config.options.clickable
+
     local has_left_scroll = scroll.current > 0
     if has_left_scroll then
+      local left_hl = (click_enabled and '%1@barbar#events#scroll_click_handler@' or '') .. HL.SCROLL_ARROW
       content = nodes.insert(content, data.buffers.pinned_width, {
-        hl = HL.SCROLL_ARROW,
+        hl = left_hl,
         text = config.options.icons.scroll.left,
       })
     end
 
     local has_right_scroll = data.buffers.used_width - scroll.current > data.buffers.width
     if has_right_scroll then
+      local right_hl = (click_enabled and '%2@barbar#events#scroll_click_handler@' or '') .. HL.SCROLL_ARROW
       content = nodes.insert(content, data.buffers.width - 1, {
-        hl = HL.SCROLL_ARROW,
+        hl = right_hl,
         text = config.options.icons.scroll.right,
       })
     end

@@ -14,6 +14,12 @@ function! barbar#events#main_click_handler(minwid, _clicks, btn, _modifiers) abo
   call luaeval("require'barbar.events'.main_click_handler(_A[1], nil, _A[2])", [a:minwid, a:btn])
 endfunction
 
+" TODO: get rid of this and use `v:lua` after raising minimum Neovim ver > 0.7
+" minwid: 1 = scroll left, 2 = scroll right
+function! barbar#events#scroll_click_handler(minwid, _clicks, btn, _modifiers) abort
+  call luaeval("require'barbar.events'.scroll_click_handler(_A[1], nil, _A[2])", [a:minwid, a:btn])
+endfunction
+
 function! barbar#events#on_option_changed(dict, _1, _2) abort
   lua require'barbar.utils'.notify_once("`g:bufferline` is deprecated, use `require'barbar'.setup` instead. See `:h barbar-setup` for more information.", vim.log.levels.WARN)
   call luaeval("require'barbar.events'.on_option_changed(_A)", a:dict)
