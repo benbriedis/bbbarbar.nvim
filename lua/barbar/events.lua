@@ -94,11 +94,9 @@ local function mouse_drag_handler()
   end
 
   local scroll = render.get_scroll()
-  local first_visible_bufnr_idx = get_idx(buffers_data, 1, scroll.current)
+  local hovered_bufnr_idx = get_idx(buffers_data, 1, col + scroll.current)
 
-  local hovered_bufnr_idx = get_idx(buffers_data, first_visible_bufnr_idx, col)
-
-  if first_visible_bufnr_idx == nil or hovered_bufnr_idx == nil then
+  if hovered_bufnr_idx == nil then
     return
   end
 
